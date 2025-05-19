@@ -19,6 +19,7 @@
           python312Packages.pip
           python312Packages.numpy
           python312Packages.pyqt6
+          python312Packages.matplotlib
         ];
       };
     };
