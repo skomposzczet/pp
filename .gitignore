@@ -1,6 +1,7 @@
 .direnv
 .venv
 
+mpi
 data/
 meas/
 res/
