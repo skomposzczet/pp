@@ -19,14 +19,14 @@ openmp() {
 
 mpi() {
     mpicxx mpi.cpp -o mpi
-    meas "mpiexec -np" "mpi" "$1"
+    meas "mpiexec mpi -np" "mpi" "$1"
 }
 
 run() {
     mkdir -p $res_dir
     max_thrs=$(lscpu | grep Core | awk -F ':' '{print $2}' | xargs)
     openmp "$max_thrs"
-    # mpi "$max_thrs"
+    mpi "$max_thrs"
 }
 
 run
