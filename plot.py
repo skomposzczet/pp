@@ -10,14 +10,15 @@ def read(filename):
     nums = []
     with open(filename, 'r') as file:
         for line in file:
-            nums.append(int(line))
+            nums.append(float(line))
     return nums
 
 
 def plot(filename):
     nums = read(filename)
     nums = list(map(lambda n: nums[0]/n, nums))
-    xs = [2**i for i in range(0, len(nums))]
+    # xs = [2**i for i in range(0, len(nums))]
+    xs = list(range(1, len(nums)+1))
 
     ax = plt.subplot()
     ax.plot(xs, nums, '-o', label=filename)
@@ -31,5 +32,5 @@ def plot(filename):
 
 if __name__ == '__main__':
     pathlib.Path(RES_DIR).mkdir(parents=True, exist_ok=True)
-    for filename in ['openmp']:
+    for filename in ['openmp', 'mpi']:
         plot(filename)

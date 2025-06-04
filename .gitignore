@@ -3,8 +3,8 @@
 
 mpi
 data/
-meas/
-res/
+meas*/
+res*/
 
 openmp
 mpi

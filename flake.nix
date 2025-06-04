@@ -11,6 +11,7 @@
         LD_LIBRARY_PATH = "${pkgs.stdenv.cc.cc.lib}/lib";
         venvDir = ".venv";
         packages = with pkgs; [
+          bc
           clang-tools
           gdb
           mpi
