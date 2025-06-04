@@ -32,5 +32,5 @@ def plot(filename):
 
 if __name__ == '__main__':
     pathlib.Path(RES_DIR).mkdir(parents=True, exist_ok=True)
-    for filename in ['openmp', 'mpi']:
+    for filename in ['openmp', 'mpi', 'hybrid1', 'hybrid2']:
         plot(filename)

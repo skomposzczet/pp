@@ -20,7 +20,7 @@ meas() {
     cmd=$1
     alg=$2
     thr=$3
-    iter=100
+    iter=10
     : > "$res_dir/$alg"
     for thr in $(seq 1 "$thr"); do
         echo "$alg" "$thr"
@@ -39,29 +39,30 @@ mpi() {
     meas "mpiexec -n %s mpi" "mpi" "$1"
 }
 
-# hybrid1() {
-#     mpicxx hybrid.cpp -o hybrid -fopenmp
-#     thr=$1
-#     per=2
-#     thr=$((thr / per))
-#     meas "mpiexec -n %s hybrid $per" "hybrid1" "$thr"
-# }
-#
-# hybrid2() {
-#     mpicxx hybrid.cpp -o hybrid -fopenmp
-#     thr=$1
-#     per=8
-#     thr=$((thr / per))
-#     meas "mpiexec -n %s hybrid $per" "hybrid2" "$thr"
-# }
+hybrid1() {
+    mpicxx hybrid.cpp -o hybrid -fopenmp
+    thr=$1
+    per=2
+    thr=$((thr / per))
+    meas "mpiexec -n %s hybrid $per" "hybrid1" "$thr"
+}
+
+hybrid2() {
+    mpicxx hybrid.cpp -o hybrid -fopenmp
+    thr=$1
+    per=4
+    thr=$((thr / per))
+    meas "mpiexec -n %s hybrid $per" "hybrid2" "$thr"
+}
 
 run() {
     mkdir -p $res_dir
     max_thrs=$(lscpu | grep "Core(s)" | awk -F ':' '{print $2}' | xargs)
-    # openmp "$max_thrs"
+    # max_thrs=$(lscpu | grep "^CPU(s):" | awk -F ':' '{print $2}' | xargs)
+    openmp "$max_thrs"
     mpi "$max_thrs"
-    #hybrid1 "$max_thrs"
-    #hybrid2 "$max_thrs"
+    hybrid1 "$max_thrs"
+    hybrid2 "$max_thrs"
 }
 
 run
