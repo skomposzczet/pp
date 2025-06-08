@@ -4,9 +4,22 @@
 #include <functional>
 #include <iostream>
 #include <mpi.h>
+#include <cmath>
 #include <omp.h>
 #include <string>
 #include <vector>
+
+void make_useless_calculations(const int value,
+                               const unsigned power_of_uselessness)
+{
+    for (unsigned i{ 0 }; i < power_of_uselessness; ++i) {
+        const auto val{ static_cast<double>(value) };
+        const auto sum{ val + val };
+        const auto sq{ sqrt(val) };
+        const auto prod{ sq / (val != 0 ? val : 1.0) };
+        const auto more_calculations{ sum / sq / prod };
+    }
+}
 
 void send_msg_with_data(const int num_of_msg,
                         const std::vector<int>& data,
@@ -24,6 +37,7 @@ int maxf(const std::vector<int>& data)
     std::vector<int> maxt(omp_get_max_threads(), 0);
 #pragma omp parallel for private(max)
     for (int val : data) {
+        make_useless_calculations(val, 200);
         int id = omp_get_thread_num();
         if (val > max) {
             max = val;
@@ -57,13 +71,29 @@ void compare_with_received_max(const int num_of_msg, int& max)
     }
 }
 
+std::vector<int> get_root_data(const int num_of_msg,
+                               const std::vector<int>& data,
+                               const int msg_data_size)
+{
+    const auto send_msg_data_size{ (num_of_msg - 1) * msg_data_size };
+    const auto root_data_size{ data.size() - send_msg_data_size };
+    std::vector<int> buffer{};
+
+    for (unsigned i{ 0 }; i < root_data_size; ++i) {
+        buffer.push_back(data.at(i + send_msg_data_size));
+    }
+
+    return buffer;
+}
+
 void execute_for_root(const int num_of_msg,
                       const std::vector<int>& data,
                       const int msg_data_size)
 {
     send_msg_with_data(num_of_msg, data, msg_data_size);
-    int max{ maxf(std::vector<int>(
-        data.begin() + ((num_of_msg - 1) * msg_data_size), data.end())) };
+    std::vector<int> root_data{ get_root_data(
+        num_of_msg, data, msg_data_size) };
+    int max{ maxf(root_data) };
     compare_with_received_max(num_of_msg, max);
 }
 

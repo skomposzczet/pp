@@ -6,6 +6,17 @@
 #include <vector>
 #include <chrono>
 #include <omp.h>
+#include <cmath>
+
+void make_useless_calculations(const int value, const unsigned power_of_uselessness){
+    for (unsigned i{0}; i < power_of_uselessness; ++i){
+        const auto val{static_cast<double>(value)};
+        const auto sum{val + val};
+        const auto sq{sqrt(val)};
+        const auto prod{sq / (val != 0 ? val : 1.0)};
+        const auto more_calculations{sum / sq / prod};
+    }
+}
 
 int maxf(const std::vector<int>& data) {
     int max = INT_MIN;
@@ -14,6 +25,7 @@ int maxf(const std::vector<int>& data) {
     #pragma omp parallel for private(max)
     for (int val: data)
     {
+        make_useless_calculations(val, 200);
         int id = omp_get_thread_num();
         if (val > max) {
             max = val;
